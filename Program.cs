@@ -6,16 +6,21 @@ namespace AgHW3_1
     internal class Program
     {
         static string promtPressAnyKey = "Нажмите любую клавишу для продолжения...";
+        private static GetInput getInput = new GetInput();
         static void Main(string[] args)
         {
-            
+
             Print1();
-            Console.WriteLine(promtPressAnyKey);
-            Console.ReadKey();
+            NextScreen();
             Print2();
-            Console.WriteLine(promtPressAnyKey);
-            Console.ReadKey();
+            NextScreen();
             Print3();
+            NextScreen();
+            Print4();
+            NextScreen();
+        }
+        static void NextScreen()
+        {
             Console.WriteLine(promtPressAnyKey);
             Console.ReadKey();
         }
@@ -39,7 +44,6 @@ namespace AgHW3_1
         }
         static void Print3()
         {
-            GetInput getInput = new GetInput();
             uint maxValue = 0;
             Console.Clear();
             Console.WriteLine("Вывод целых положительных чисел до заданного числа (используется for)");
@@ -56,16 +60,82 @@ namespace AgHW3_1
                 }
             }
         }
+        static void Print4()
+        {
+            Random rnd = new Random();
+            Console.Clear();
+            Console.WriteLine("Вывод случайного ряда целых чисел");
+            Console.WriteLine("Введите границы диапазона:");
+            short minValue = getInput.Int16();
+            short maxValue = getInput.Int16();
+            Console.WriteLine("Введите число повторений:");
+            byte numberDice = getInput.Byte();
+            if (minValue > maxValue)
+            {
+                short val = maxValue;
+                maxValue = minValue;
+                minValue = val;
+            }
+            for (int i = 0; i < maxValue; i++)
+            {
+                Console.WriteLine(rnd.Next(minValue, (maxValue + 1)));
+            }
+        }
     }
     internal class GetInput
     {
-        internal ushort Uint16()
+        private void PromtInputFromDiapazon(string str)
         {
-            //uint result;
+            string diapazonShot = "-32 768...32 767";
+            string diapazonUshot = "0...65535";
+            string diapazonByte = "0...255";
+            string diapazon = "";
+            switch (str)
+            {
+                case "short":
+                    diapazon = diapazonShot;
+                    break;
+                case "ushort":
+                    diapazon = diapazonUshot;
+                    break;
+                case "byte":
+                    diapazon = diapazonByte;
+                    break;
+            }
+            Console.WriteLine($"Введите число в пределах {diapazon} и нажмите Enter");
+        }
+        internal byte Byte()
+        {
             string inputStr = string.Empty;
             while (true)
             {
-                Console.WriteLine("Введите число в пределах 0...65535 и нажмите Enter");
+                PromtInputFromDiapazon("byte");
+                inputStr = Console.ReadLine();
+                if (byte.TryParse(inputStr, out byte result))
+                {
+                    return result;
+                }
+            }
+        }
+        internal short Int16()
+        {
+            string inputStr = string.Empty;
+            while (true)
+            {
+                PromtInputFromDiapazon("short");
+                inputStr = Console.ReadLine();
+                if (short.TryParse(inputStr, out short result))
+                {
+                    return result;
+                }
+            }
+        }
+        internal ushort Uint16()
+        {
+            string inputStr = string.Empty;
+            while (true)
+            {
+                PromtInputFromDiapazon("ushort");
                 inputStr = Console.ReadLine();
                 if (ushort.TryParse(inputStr, out ushort result))
                 {
