@@ -7,45 +7,49 @@ namespace AgHW3_1
     {
         static string promtPressAnyKey = "Нажмите любую клавишу для продолжения...";
         private static GetInput getInput = new GetInput();
+        private static Random rnd = new Random();
         static void Main(string[] args)
         {
-
-            Print1();
+            Task1Part1();
             NextScreen();
-            Print2();
+            Task1Part2();
             NextScreen();
-            Print3();
+            Task1Part3();
             NextScreen();
-            Print4();
+            Task1Part4();
+            NextScreen();
+            Task2();
+            NextScreen();
+            Task3();
+            NextScreen();
+            Task4();
             NextScreen();
         }
         static void NextScreen()
         {
             Console.WriteLine(promtPressAnyKey);
             Console.ReadKey();
-        }
-        static void Print1()
-        {
             Console.Clear();
+        }
+        static void Task1Part1()
+        {
             Console.WriteLine("Вывод цифр 0...9 (используется for)");
             for (int i = 0; i < 10; i++)
             {
                 Console.WriteLine(i);
             }
         }
-        static void Print2()
+        static void Task1Part2()
         {
-            Console.Clear();
             Console.WriteLine("Вывод чисел 10...1 (используется for)");
             for (int i = 10; i > 0; i--)
             {
                 Console.WriteLine(i);
             }
         }
-        static void Print3()
+        static void Task1Part3()
         {
             uint maxValue = 0;
-            Console.Clear();
             Console.WriteLine("Вывод целых положительных чисел до заданного числа (используется for)");
             maxValue = getInput.Uint16();
             for (int i = 1; i < maxValue; i++)
@@ -60,10 +64,8 @@ namespace AgHW3_1
                 }
             }
         }
-        static void Print4()
+        static void Task1Part4()
         {
-            Random rnd = new Random();
-            Console.Clear();
             Console.WriteLine("Вывод случайного ряда целых чисел");
             Console.WriteLine("Введите границы диапазона:");
             short minValue = getInput.Int16();
@@ -76,9 +78,115 @@ namespace AgHW3_1
                 maxValue = minValue;
                 minValue = val;
             }
-            for (int i = 0; i < maxValue; i++)
+            for (int i = 0; i < numberDice; i++)
             {
                 Console.WriteLine(rnd.Next(minValue, (maxValue + 1)));
+            }
+        }
+        static void Task2()
+        {
+            Console.WriteLine("Введите строку символов и нажмите Enter");
+            string inputString = Console.ReadLine();
+            bool isEvenNumber = false;
+            foreach (char ch in inputString)
+            {
+                if (isEvenNumber)
+                    Console.Write(Char.ToUpper(ch));
+                else
+                    Console.Write(Char.ToLower(ch));
+                isEvenNumber = !isEvenNumber;
+            }
+            Console.WriteLine();
+        }
+        static void Task3()
+        {
+            Console.WriteLine("Поиск близжайшего простого числа " +
+                "в пределах 0...65535 от введённого");
+            ushort minPrime = 0;
+            ushort maxPrime = 0;
+            ushort value = getInput.Uint16();
+
+            for (int i = (value - 1); i > 0; i--)
+            {
+                if (IsPrime(i))
+                {
+                    minPrime = (ushort) i;
+                    break;
+                }
+            }
+            for (int i = (value + 1); i <= ushort.MaxValue; i++)
+            {
+                if (IsPrime(i))
+                {
+                    maxPrime = (ushort) i;
+                    break;
+                }
+            }
+            Console.Write("Близжайшее простое число: ");
+            if (minPrime == 0)
+            {
+                Console.WriteLine(maxPrime);
+                return;
+            }
+            if (maxPrime == 0)
+            {
+                Console.WriteLine(minPrime);
+                return;
+            }
+            if ((value - minPrime) < (maxPrime - value))
+                Console.WriteLine(minPrime);
+            if ((value - minPrime) > (maxPrime - value))
+                Console.WriteLine(maxPrime);
+            if ((value - minPrime) == (maxPrime - value))
+                Console.WriteLine($"слева - {minPrime}, справа - {maxPrime}");
+            return;
+
+            bool IsPrime(int number)
+            {
+                for (int i = 2; i <= number/2; i++)
+                {
+                    if (number % i == 0)
+                        return false;
+                }
+                return true;
+            }
+        }
+        static void Task4()
+        {
+            byte numberTypes = 0;
+            while (numberTypes == 0)
+            {
+                Console.WriteLine("Введите количество томов");
+                numberTypes = getInput.Byte();
+            }
+            int[] types = new int[numberTypes];
+            int volumeAllPages = rnd.Next(8000, 10001);
+            int volumeSet = 0;
+            int tail = 0;
+            int tailCount = 0;
+            Console.WriteLine($"Всего в наличии {volumeAllPages} листов");
+            Console.WriteLine($"Один набор состоит из {numberTypes} томов");
+            for (int i = 0; i < numberTypes; i++)
+            {
+                types[i] = rnd.Next(50, 201);
+                Console.WriteLine($"Том {i + 1} - {types[i]} листов.");
+                volumeSet += types[i];
+            }
+            Console.WriteLine($"Всего набор состоит из {volumeSet} листов");
+            Console.WriteLine($"Можно изготовить {volumeAllPages / volumeSet} полных наборов");
+            tail = volumeAllPages % volumeSet;
+            if (tail > types[0])
+            {
+                Console.WriteLine("Дополнительно можно напечатать:");
+                while (tail > 0)
+                {
+                    tail -= types[tailCount];
+                    if (tail > 0)
+                    {
+                        tailCount++;
+                        Console.WriteLine($"Том {tailCount}");
+                    }
+                }
             }
         }
     }
@@ -125,9 +233,7 @@ namespace AgHW3_1
                 PromtInputFromDiapazon("short");
                 inputStr = Console.ReadLine();
                 if (short.TryParse(inputStr, out short result))
-                {
                     return result;
-                }
             }
         }
         internal ushort Uint16()
@@ -138,10 +244,7 @@ namespace AgHW3_1
                 PromtInputFromDiapazon("ushort");
                 inputStr = Console.ReadLine();
                 if (ushort.TryParse(inputStr, out ushort result))
-                {
                     return result;
-                }
-
             }
         }
         internal double Double(string _askDouble)
