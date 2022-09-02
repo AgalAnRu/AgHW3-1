@@ -50,7 +50,7 @@ namespace AgHW3_1
         static void Task1Part3()
         {
             uint maxValue = 0;
-            Console.WriteLine("Вывод целых положительных чисел до заданного числа (используется for)");
+            Console.WriteLine("Вывод целых положительных чисел (кратных 3 или 5) до заданного числа (используется for)");
             maxValue = getInput.Uint16();
             for (int i = 1; i < maxValue; i++)
             {
