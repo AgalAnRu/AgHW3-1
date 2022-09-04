@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace AgHW3_1
 {
@@ -8,28 +7,44 @@ namespace AgHW3_1
         static string promtPressAnyKey = "Нажмите любую клавишу для продолжения...";
         private static GetInput getInput = new GetInput();
         private static Random rnd = new Random();
+        delegate void method();
+        static string[] menuItems = new string[8];
         static void Main(string[] args)
         {
-            Task1Part1();
-            NextScreen();
-            Task1Part2();
-            NextScreen();
-            Task1Part3();
-            NextScreen();
-            Task1Part4();
-            NextScreen();
-            Task2();
-            NextScreen();
-            Task3();
-            NextScreen();
-            Task4();
-            NextScreen();
+            MenuInitialization();
+            method[] methods = new method[] { Task1Part1, Task1Part2, Task1Part3, Task1Part4,
+                Task2, Task3, Task4, QuitFromConsole};
+            int selectedMenuItem;
+            AgMenu menu = new AgMenu(menuItems);
+            do
+            {
+                selectedMenuItem = menu.ShowMenu();
+                Console.Clear();
+                methods[selectedMenuItem]();
+                if (selectedMenuItem == menuItems.Length - 1)
+                    continue;
+                NextScreen();
+            } while (selectedMenuItem != menuItems.Length - 1);
+        }
+        static void MenuInitialization()
+        {
+            menuItems[0] = "Задача 1. Часть 1";
+            menuItems[1] = "Задача 1. Часть 2";
+            menuItems[2] = "Задача 1. Часть 3";
+            menuItems[3] = "Задача 1. Часть 4";
+            menuItems[4] = "Задача 2.";
+            menuItems[5] = "Задача 3";
+            menuItems[6] = "Задача 4";
+            menuItems[7] = "Выход";
+        }
+        static void QuitFromConsole()
+        {
+            //NextScreen();
         }
         static void NextScreen()
         {
             Console.WriteLine(promtPressAnyKey);
             Console.ReadKey();
-            Console.Clear();
         }
         static void Task1Part1()
         {
@@ -110,7 +125,7 @@ namespace AgHW3_1
             {
                 if (IsPrime(i))
                 {
-                    minPrime = (ushort) i;
+                    minPrime = (ushort)i;
                     break;
                 }
             }
@@ -118,7 +133,7 @@ namespace AgHW3_1
             {
                 if (IsPrime(i))
                 {
-                    maxPrime = (ushort) i;
+                    maxPrime = (ushort)i;
                     break;
                 }
             }
@@ -143,7 +158,7 @@ namespace AgHW3_1
 
             bool IsPrime(int number)
             {
-                for (int i = 2; i <= number/2; i++)
+                for (int i = 2; i <= number / 2; i++)
                 {
                     if (number % i == 0)
                         return false;
@@ -210,7 +225,7 @@ namespace AgHW3_1
                     diapazon = diapazonByte;
                     break;
             }
-            Console.WriteLine($"Введите число в пределах {diapazon} и нажмите Enter");
+            Console.WriteLine($"(Введите число в пределах {diapazon} и нажмите Enter)");
         }
         internal byte Byte()
         {
@@ -286,6 +301,52 @@ namespace AgHW3_1
                     return result;
                 }
             }
+        }
+    }
+    internal class AgMenu
+    {
+        string[] menuItems;
+        int counter;
+        internal AgMenu(string[] menuItems) => this.menuItems = menuItems;
+        internal int ShowMenu()
+        {
+            ConsoleKey key;
+            do
+            {
+                Console.Clear();
+                for (int i = 0; i < menuItems.Length; i++)
+                {
+                    if (i == counter)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    Console.WriteLine(menuItems[i]);
+                    if (i == counter)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                }
+                Console.WriteLine("(Выберите пункт меню и нажмите Enter " +
+                    "или нажмите Escape для выхода)");
+                key = Console.ReadKey().Key;
+                if (key == ConsoleKey.DownArrow)
+                {
+                    counter++;
+                    if (counter == menuItems.Length)
+                        counter = 0;
+                }
+                if (key == ConsoleKey.UpArrow)
+                {
+                    counter--;
+                    if (counter == -1)
+                        counter = menuItems.Length - 1;
+                }
+            } while (key != ConsoleKey.Enter && key != ConsoleKey.Escape);
+            if (key == ConsoleKey.Escape)
+                counter = menuItems.Length - 1;
+            return counter;
         }
     }
 }
